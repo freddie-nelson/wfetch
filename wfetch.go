@@ -11,12 +11,14 @@ func main() {
 
 	artLines := strings.Split(Art, "\n")
 	numOfPaddingLines := (len(artLines) - len(formattedInfo)) / 2
+	accent := GetAccentColor()
+	accentAnsii := fmt.Sprintf("\033[38;2;%v;%v;%vm", accent.R, accent.G, accent.B)
 
 	for i := 0; i < len(artLines); i++ {
 		if i < numOfPaddingLines || i-numOfPaddingLines > len(formattedInfo)-1 {
-			fmt.Println(artLines[i])
+			fmt.Println(accentAnsii + artLines[i] + "\033[0m")
 		} else {
-			fmt.Printf("%s%s\n", artLines[i], formattedInfo[i-numOfPaddingLines])
+			fmt.Printf("%s%s%s\n", accentAnsii, artLines[i], formattedInfo[i-numOfPaddingLines])
 		}
 	}
 }

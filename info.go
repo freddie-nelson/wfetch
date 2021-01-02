@@ -30,7 +30,7 @@ type SysInfo struct {
 func FormatInfo(info SysInfo) string {
 	// accent := GetAccentColor()
 
-	return fmt.Sprintf(
+	s := fmt.Sprintf(
 		`OS: %s
 Host: %s
 Kernel: %s
@@ -42,6 +42,8 @@ CPU: %s
 GPU: %s
 Memory: %v MB / %v MB`,
 		info.os, info.host, info.kernel, info.bootTime, info.de, info.wm, info.terminal, info.cpu, info.gpu, info.memUsed, info.memTotal)
+
+	return strings.Replace(s, ": ", "\033[0m: ", -1)
 }
 
 // GetInfo gets system info for the current users environment
