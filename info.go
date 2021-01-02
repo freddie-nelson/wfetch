@@ -18,6 +18,7 @@ type SysInfo struct {
 	os             string
 	kernel         string
 	bootTime       string
+	shell          string
 	de             string
 	wm             string
 	terminal       string
@@ -30,9 +31,8 @@ type SysInfo struct {
 
 // FormatInfo formats the given SysInfo into a multiline string
 func FormatInfo(info SysInfo) string {
-	// accent := GetAccentColor()
-	resetAnsii := "\033[0m"
-	userAtHost := fmt.Sprintf("%s@%s%s", info.user, resetAnsii, info.host)
+	userAtHost := fmt.Sprintf("%s%s@%s%s", info.user, ResetAnsii, AccentAnsii, info.host)
+	underline := ResetAnsii + strings.Repeat("-", len(userAtHost)-len(AccentAnsii)-len(ResetAnsii))
 
 	s := fmt.Sprintf(
 		`%s
@@ -43,11 +43,12 @@ Kernel: %s
 Uptime: %s
 DE: %s
 WM: %s
+Shell: %s
 Terminal: %s
 CPU: %s
 GPU: %s
 Memory: %v MB / %v MB`,
-		userAtHost, resetAnsii+strings.Repeat("-", len(userAtHost)-2), info.os, info.host, info.kernel, info.bootTime, info.de, info.wm, info.terminal, info.cpu, info.gpu, info.memUsed, info.memTotal)
+		userAtHost, underline, info.os, info.host, info.kernel, info.bootTime, info.de, info.wm, info.shell, info.terminal, info.cpu, info.gpu, info.memUsed, info.memTotal)
 
 	return strings.Replace(s, ": ", "\033[0m: ", -1)
 }
@@ -87,12 +88,54 @@ func GetInfo() SysInfo {
 
 	pProcess, _ := ps.FindProcess(os.Getppid())
 	ppProcess, _ := ps.FindProcess(pProcess.PPid())
-	info.terminal = ppProcess.Executable()[:len(ppProcess.Executable())-4]
-	if info.terminal == "explorer" {
+	if ppProcess.Executable() == "explorer.exe" {
 		info.terminal = pProcess.Executable()[:len(pProcess.Executable())-4]
+		info.shell = getShell(info.terminal, info.kernel)
+	} else {
+		info.terminal = ppProcess.Executable()[:len(ppProcess.Executable())-4]
+		info.shell = getShell(pProcess.Executable()[:len(pProcess.Executable())-4], info.kernel)
 	}
 
 	return info
+}
+
+func getShell(term string, kern string) string {
+	switch term {
+	case "cmd":
+		return fmt.Sprintf("%s %s", term, kern)
+	case "pwsh":
+		fallthrough
+	case "powershell":
+		version := getPowershellVersion()
+
+		return fmt.Sprintf("%s %s", term, version)
+	}
+
+	return ""
+}
+
+func getPowershellVersion() string {
+	major, _ := exec.Command("powershell", "(Get-Variable PSVersionTable -ValueOnly).PSVersion.Major").Output()
+	minor, _ := exec.Command("powershell", "(Get-Variable PSVersionTable -ValueOnly).PSVersion.Minor").Output()
+	patch, _ := exec.Command("powershell", "(Get-Variable PSVersionTable -ValueOnly).PSVersion.Patch").Output()
+
+	versionSlice := make([]string, 0, 3)
+	if len(major) > 0 {
+		versionSlice = append(versionSlice, string(major))
+	}
+	if len(minor) > 0 {
+		versionSlice = append(versionSlice, string(minor))
+	}
+	if len(patch) > 0 {
+		versionSlice = append(versionSlice, string(patch))
+	}
+
+	var version string
+	for _, s := range versionSlice {
+		version += "." + strings.Trim(s, "\r\n")
+	}
+
+	return version[1:]
 }
 
 func getValuesFromList(out []byte, _ error) []string {
