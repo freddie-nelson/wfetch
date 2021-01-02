@@ -12,7 +12,7 @@ func main() {
 	artLines := strings.Split(Art, "\n")
 	numOfPaddingLines := (len(artLines) - len(formattedInfo)) / 2
 
-	fmt.Println()
+	fmt.Printf("\n\n\n")
 	for i := 0; i < len(artLines); i++ {
 		if i < numOfPaddingLines || i-numOfPaddingLines > len(formattedInfo)-1 {
 			fmt.Println(AccentAnsii + artLines[i] + ResetAnsii)
@@ -20,5 +20,5 @@ func main() {
 			fmt.Printf("%s%s       %s\n", AccentAnsii, artLines[i], formattedInfo[i-numOfPaddingLines])
 		}
 	}
-	fmt.Println()
+	fmt.Printf("\n\n\n")
 }
