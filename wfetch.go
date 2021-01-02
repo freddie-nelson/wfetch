@@ -7,75 +7,101 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/mitchellh/go-ps"
 )
 
+type sysInfo struct {
+	host     string
+	os       string
+	kernel   string
+	bootTime string
+	de       string
+	wm       string
+	terminal string
+	cpu      string
+	gpu      string
+	memUsed  int
+	memTotal int
+}
+
 func main() {
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		return
-	}
-
-	info, err := getInfo(homeDir)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
+	info := getInfo()
 	fmt.Println(formatInfo(info))
 }
 
-func getInfo(home string) ([]string, error) {
-	out, err := exec.Command(fmt.Sprintf("systeminfo")).Output()
-	if err != nil {
-		return []string{}, err
-	}
-
-	splitOutput := strings.Split(string(out), "\r\n")
-	info := make([]string, 0)
-
-	for _, s := range splitOutput {
-		if strings.Contains(s, "Hotfix(s):") {
-			break
-		} else {
-			temp := strings.Split(s, ": ")
-			if len(temp) == 1 {
-				continue
-			}
-
-			info = append(info, strings.TrimSpace(temp[1]))
-		}
-	}
-
-	return info, nil
-}
-
-func formatInfo(info []string) string {
-	host := info[0]
-	os := info[1]
-	kernel := strings.Split(info[2], " N/A")[0]
-	bootTime := bootTimeToUptime(info[10])
-	memTotal := memToInt(info[23])
-	memUsed := memTotal - memToInt(info[24])
+func formatInfo(info sysInfo) string {
 	return fmt.Sprintf(
 		`OS: %s
 Host: %s
 Kernel: %s
 Uptime: %s
+DE: %s
+WM: %s
+Terminal: %s
+CPU: %s
+GPU: %s
 Memory: %v MB / %v MB`,
-		os, host, kernel, bootTime, memUsed, memTotal)
+		info.os, info.host, info.kernel, info.bootTime, info.de, info.wm, info.terminal, info.cpu, info.gpu, info.memUsed, info.memTotal)
 }
 
-func memToInt(memStr string) int {
-	memInt, _ := strconv.Atoi(strings.Replace(memStr[:len(memStr)-3], ",", "", -1))
-	return memInt
+func getInfo() sysInfo {
+	info := sysInfo{}
+
+	// get host -- name of pc
+	info.host = getValuesFromList(exec.Command("wmic", "computersystem", "get", "name", "/value").Output())[0]
+
+	// get os info
+	osInfo := getValuesFromList(exec.Command("wmic", "os", "get", "caption,freephysicalmemory,lastbootuptime,totalvisiblememorysize,version", "/value").Output())
+	info.os = osInfo[0]
+	info.kernel = osInfo[4]
+	info.bootTime = bootTimeToUptime(osInfo[2])
+	info.memTotal = memToInt(osInfo[3])
+	info.memUsed = info.memTotal - memToInt(osInfo[1])
+
+	// hardware info
+	info.cpu = getValuesFromList(exec.Command("wmic", "cpu", "get", "name", "/value").Output())[0]
+	if strings.Contains(info.cpu, "Intel") {
+		info.cpu = info.cpu[18:]
+	}
+
+	info.gpu = getValuesFromList(exec.Command("wmic", "path", "win32_VideoController", "get", "caption", "/value").Output())[0]
+
+	// windows specific values
+	info.de = "Aero"
+	info.wm = "Explorer"
+
+	// terminal
+	pProcess, _ := ps.FindProcess(os.Getppid())
+	ppProcess, _ := ps.FindProcess(pProcess.PPid())
+	info.terminal = ppProcess.Executable()[:len(ppProcess.Executable())-4]
+	if info.terminal == "explorer" {
+		info.terminal = pProcess.Executable()[:len(pProcess.Executable())-4]
+	}
+
+	return info
+}
+
+func getValuesFromList(out []byte, _ error) []string {
+	list := strings.Split(string(out), "\r")
+
+	values := make([]string, 0)
+	for _, s := range list {
+		if strings.Contains(s, "=") {
+			values = append(values, strings.Split(s, "=")[1])
+		}
+	}
+
+	return values
 }
 
 func bootTimeToUptime(bootTime string) string {
-	layout := "01/02/2006, 15:04:05"
-	date, _ := time.Parse(layout, bootTime)
+	layout := "20060201150405"
+	bootTimeWMI := strings.Split(bootTime, ".")[0]
+	bootTimeParsed, _ := time.Parse(layout, bootTimeWMI)
 
-	duration := time.Since(date)
-	days := int(duration.Hours()) % 24
+	duration := time.Since(bootTimeParsed)
+	days := int(duration.Hours() / 24)
 	hours := int(duration.Hours()) - (24 * days)
 	minutes := int(duration.Minutes()) - int(duration.Hours())*60
 
@@ -91,4 +117,9 @@ func bootTimeToUptime(bootTime string) string {
 	}
 
 	return strings.Join(uptime, ", ")
+}
+
+func memToInt(memStr string) int {
+	memInt, _ := strconv.Atoi(memStr)
+	return memInt / 1024
 }
