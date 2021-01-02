@@ -1,0 +1,43 @@
+[?25l[?7l[0m[36m[1m                                ..,
+                    ....,,:;+ccllll
+      ...,,+:;  cllllllllllllllllll
+,cclllllllllll  lllllllllllllllllll
+llllllllllllll  lllllllllllllllllll
+llllllllllllll  lllllllllllllllllll
+llllllllllllll  lllllllllllllllllll
+llllllllllllll  lllllllllllllllllll
+llllllllllllll  lllllllllllllllllll
+
+llllllllllllll  lllllllllllllllllll
+llllllllllllll  lllllllllllllllllll
+llllllllllllll  lllllllllllllllllll
+llllllllllllll  lllllllllllllllllll
+llllllllllllll  lllllllllllllllllll
+`'ccllllllllll  lllllllllllllllllll
+       `' \*::  :ccllllllllllllllll
+                       ````''*::cll
+                                 ``[0m
+[19A[9999999D[38C[0m[1m[36m[1mfredd[0m@[36m[1mDESKTOP-HUSDUI8[0m 
+[38C[0m---------------------[0m 
+[38C[0m[36m[1mOS[0m[0m:[0m Windows 10 Pro x86_64[0m 
+[38C[0m[36m[1mHost[0m[0m:[0m MSI MS-7971[0m 
+[38C[0m[36m[1mKernel[0m[0m:[0m 10.0.19041[0m 
+[38C[0m[36m[1mUptime[0m[0m:[0m 1 day, 4 hours, 46 mins[0m 
+[38C[0m[36m[1mPackages[0m[0m:[0m 2 (scoop)[0m 
+[38C[0m[36m[1mShell[0m[0m:[0m bash 4.4.23[0m 
+[38C[0m[36m[1mResolution[0m[0m:[0m 1920x1080[0m 
+[38C[0m[36m[1mDE[0m[0m:[0m Aero[0m 
+[38C[0m[36m[1mWM[0m[0m:[0m Explorer[0m 
+[38C[0m[36m[1mWM Theme[0m[0m:[0m Custom[0m 
+[38C[0m[36m[1mTerminal[0m[0m:[0m Windows Terminal[0m 
+[38C[0m[36m[1mCPU[0m[0m:[0m Intel i5-6500 (4) @ 3.200GHz[0m 
+[38C[0m[36m[1mGPU[0m[0m:[0m Caption[0m 
+[38C[0m[36m[1mGPU[0m[0m:[0m NVIDIA GeForce GTX 1060 3GB[0m 
+[38C[0m[1mGPU[0m 
+[38C[0m[36m[1mMemory[0m[0m:[0m 7402MiB / 16346MiB[0m 
+
+[38C[30m[40m   [31m[41m   [32m[42m   [33m[43m   [34m[44m   [35m[45m   [36m[46m   [37m[47m   [m
+[38C[38;5;8m[48;5;8m   [38;5;9m[48;5;9m   [38;5;10m[48;5;10m   [38;5;11m[48;5;11m   [38;5;12m[48;5;12m   [38;5;13m[48;5;13m   [38;5;14m[48;5;14m   [38;5;15m[48;5;15m   [m
+
+
+[?25h[?7h
