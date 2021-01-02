@@ -20,5 +20,5 @@ func main() {
 			fmt.Printf("%s%s       %s\n", AccentAnsii, artLines[i], formattedInfo[i-numOfPaddingLines])
 		}
 	}
-	fmt.Printf("\n\n\n")
+	fmt.Printf("\n\n\n\033[0m")
 }

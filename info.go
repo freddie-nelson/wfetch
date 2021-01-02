@@ -50,7 +50,7 @@ GPU: %s
 Memory: %v MB / %v MB`,
 		userAtHost, underline, info.os, info.host, info.kernel, info.bootTime, info.de, info.wm, info.shell, info.terminal, info.cpu, info.gpu, info.memUsed, info.memTotal)
 
-	return strings.Replace(s, ": ", "\033[0m: ", -1)
+	return strings.Replace(s, ": ", ResetAnsii+": ", -1)
 }
 
 // GetInfo gets system info for the current users environment
