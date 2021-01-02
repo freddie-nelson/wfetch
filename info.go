@@ -50,7 +50,22 @@ GPU: %s
 Memory: %v MB / %v MB`,
 		userAtHost, underline, info.os, info.host, info.kernel, info.bootTime, info.de, info.wm, info.shell, info.terminal, info.cpu, info.gpu, info.memUsed, info.memTotal)
 
-	return strings.Replace(s, ": ", ResetAnsii+": ", -1)
+	colorPalette := createColorPalette()
+
+	return strings.Replace(s, ": ", ResetAnsii+": ", -1) + "\n\n" + colorPalette
+}
+
+func createColorPalette() string {
+	csrEscapeChar := "\033["
+
+	var dark string
+	var bright string
+	for i := 0; i < 8; i++ {
+		dark += fmt.Sprintf("%s%sm   %s", csrEscapeChar, fmt.Sprint(40+i), ResetAnsii)
+		bright += fmt.Sprintf("%s%sm   %s", csrEscapeChar, fmt.Sprint(100+i), ResetAnsii)
+	}
+
+	return fmt.Sprintf("%s\n%s\n", dark, bright)
 }
 
 // GetInfo gets system info for the current users environment
