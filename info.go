@@ -52,7 +52,7 @@ Memory: %v MB / %v MB`,
 
 	colorPalette := createColorPalette()
 
-	return strings.Replace(s, ": ", ResetAnsii+": ", -1) + "\n\n" + colorPalette
+	return "\n" + strings.Replace(s, ": ", ResetAnsii+": ", -1) + "\n\n" + colorPalette
 }
 
 func createColorPalette() string {

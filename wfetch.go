@@ -17,7 +17,7 @@ func main() {
 		if i < numOfPaddingLines || i-numOfPaddingLines > len(formattedInfo)-1 {
 			fmt.Println(AccentAnsii + artLines[i] + ResetAnsii)
 		} else {
-			fmt.Printf("%s%s       %s\n", AccentAnsii, artLines[i], formattedInfo[i-numOfPaddingLines])
+			fmt.Printf("%s%s         %s\n", AccentAnsii, artLines[i], formattedInfo[i-numOfPaddingLines])
 		}
 	}
 	fmt.Printf("\n\n\n\033[0m")
