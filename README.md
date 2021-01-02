@@ -1,4 +1,4 @@
-![wfetch](https://raw.githubusercontent.com/freddie-nelson/bang/main/demo.png)
+![wfetch](https://raw.githubusercontent.com/freddie-nelson/wfetch/main/demo.png)
 
 ## Table of Contents 📰
 
