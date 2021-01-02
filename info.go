@@ -13,25 +13,31 @@ import (
 
 // SysInfo is a store for system info
 type SysInfo struct {
-	host     string
-	os       string
-	kernel   string
-	bootTime string
-	de       string
-	wm       string
-	terminal string
-	cpu      string
-	gpu      string
-	memUsed  int
-	memTotal int
+	user           string
+	host           string
+	os             string
+	kernel         string
+	bootTime       string
+	de             string
+	wm             string
+	terminal       string
+	cpu            string
+	gpu            string
+	memUsed        int
+	memTotal       int
+	terminalHeight int
 }
 
 // FormatInfo formats the given SysInfo into a multiline string
 func FormatInfo(info SysInfo) string {
 	// accent := GetAccentColor()
+	resetAnsii := "\033[0m"
+	userAtHost := fmt.Sprintf("%s@%s%s", info.user, resetAnsii, info.host)
 
 	s := fmt.Sprintf(
-		`OS: %s
+		`%s
+%s
+OS: %s
 Host: %s
 Kernel: %s
 Uptime: %s
@@ -41,7 +47,7 @@ Terminal: %s
 CPU: %s
 GPU: %s
 Memory: %v MB / %v MB`,
-		info.os, info.host, info.kernel, info.bootTime, info.de, info.wm, info.terminal, info.cpu, info.gpu, info.memUsed, info.memTotal)
+		userAtHost, resetAnsii+strings.Repeat("-", len(userAtHost)-2), info.os, info.host, info.kernel, info.bootTime, info.de, info.wm, info.terminal, info.cpu, info.gpu, info.memUsed, info.memTotal)
 
 	return strings.Replace(s, ": ", "\033[0m: ", -1)
 }
@@ -50,8 +56,10 @@ Memory: %v MB / %v MB`,
 func GetInfo() SysInfo {
 	info := SysInfo{}
 
-	// get host -- name of pc
-	info.host = getValuesFromList(exec.Command("wmic", "computersystem", "get", "name", "/value").Output())[0]
+	// get computersystem info
+	computerSystemInfo := getValuesFromList(exec.Command("wmic", "computersystem", "get", "name,username", "/value").Output())
+	info.host = computerSystemInfo[0]
+	info.user = strings.Split(computerSystemInfo[1], "\\")[1]
 
 	// get os info
 	osInfo := getValuesFromList(exec.Command("wmic", "os", "get", "caption,freephysicalmemory,lastbootuptime,totalvisiblememorysize,version", "/value").Output())
@@ -74,6 +82,9 @@ func GetInfo() SysInfo {
 	info.wm = "Explorer"
 
 	// terminal
+	// terminalLines, _ := exec.Command("mode", "con", "/status", "|", "findstr", "Lines:").Output()
+	// info.terminalHeight, _ = strconv.Atoi(strings.Split(string(terminalLines), ":")[1])
+
 	pProcess, _ := ps.FindProcess(os.Getppid())
 	ppProcess, _ := ps.FindProcess(pProcess.PPid())
 	info.terminal = ppProcess.Executable()[:len(ppProcess.Executable())-4]
