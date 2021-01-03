@@ -9,17 +9,17 @@
 
 ## Installation 🔥
 ```bash
-// using go cli
+# using go cli
 go install github.com/freddie-nelson/wfetch
 ```
 
 ## How to use 👍
 
 ```bash
-// Default terminal color
+# Default terminal color
 wfetch
 
-// Pick color from desktop wallpaper
+# Pick color from desktop wallpaper
 wfetch --wall
 ```
 
