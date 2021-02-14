@@ -172,7 +172,6 @@ func bootTimeToUptime(bootTime string) string {
 	bootTimeParsed, _ := time.Parse(layout, bootTimeWMI)
 
 	duration := time.Since(bootTimeParsed)
-	fmt.Println(duration)
 	days := int(duration.Hours() / 24)
 	hours := int(duration.Hours()) - (24 * days)
 	minutes := int(duration.Minutes()) - int(duration.Hours())*60
