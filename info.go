@@ -167,11 +167,12 @@ func getValuesFromList(out []byte, _ error) []string {
 }
 
 func bootTimeToUptime(bootTime string) string {
-	layout := "20060201150405"
+	layout := "20060102150405"
 	bootTimeWMI := strings.Split(bootTime, ".")[0]
 	bootTimeParsed, _ := time.Parse(layout, bootTimeWMI)
 
 	duration := time.Since(bootTimeParsed)
+	fmt.Println(duration)
 	days := int(duration.Hours() / 24)
 	hours := int(duration.Hours()) - (24 * days)
 	minutes := int(duration.Minutes()) - int(duration.Hours())*60
